@@ -17,7 +17,7 @@ app.get("/", (req, res) => {
 
 
 // Aqui vão todas suas Rotas
-app.use('/comidas', universoRoutes)
+app.use('/universos', universoRoutes);
 
 
 // Iniciar servidor escutando na porta definida

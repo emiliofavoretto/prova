@@ -1,3 +1,7 @@
+import dados from "../models/dados.js";
+const { animes } = dados;
+
+
 import * as universoModels from '../models/UNmodels.js'
 
 export const listarTodos = async (req, res) =>  {
@@ -58,12 +62,12 @@ export const listarUm = async (req,res) => {
 } 
 
 const createuniverso = (req, res) => {
-    const {titulo, genero, estudio, anoLancamento, episodios, status, classificacao, temporadas} = req.body;
+    const {nome, genero, criador, midia, cronologia, personagens, popularidade, ativo} = req.body;
 
 
-    const generoAnime = ["Ação", "Fantasia Sombria", "Pós-apocalíptico", "Sobrenatural", "Aventura", "Super-herói", "Artes Marciais", "Suspense", "Mistério", "Comédia", "Slice of Life" ];
+    const generouniverso = ["Ação", "Fantasia Sombria", "Pós-apocalíptico", "Sobrenatural", "Aventura", "Super-herói", "Artes Marciais", "Suspense", "Mistério", "Comédia", "Slice of Life" ];
 
-    if (!titulo) {
+    if (!nome > 3) {
         return res.status(400).json({
             success: false,
             message: "O campo titulo é obrigatorio"
@@ -75,25 +79,25 @@ const createuniverso = (req, res) => {
             message: "O campo genero é obrigatorio"
         });
     }
-    if (!estudio) {
+    if (!criador) {
         return res.status(400).json({
             success: false,
             message: "O campo estudio é obrigatorio"
         });
     }
-    if (!anoLancamento) {
+    if (!midia) {
         return res.status(400).json({
             success: false,
             message: "O campo anolancamento é obrigatorio"
         });
     }
-    if (episodios) {
+    if (cronologia) {
         return res.status(400).json({
             success: false,
             message: "O campo episodio é obrigatorio"
         });
     }
-    if (!status) {
+    if (!personagens) {
         return res.status(400).json({
             success: false,
             message: "O campo status é obrigatorio"
@@ -113,14 +117,126 @@ const createuniverso = (req, res) => {
     }
 
 
-    if (episodios > 0) {
+    if (popularidade > 0) {
         return res.status(400).json({
             success: false,
             message: "O anime deve ter mais que um episodio"
         });
     }
-    if (!status.includes(status)) {
+    if (!ativo.includes(status)) {
         return res.status(400).json({
             success: false,
             message: `O `
+        });}
+    
+const novouniverso = {
+        id: animes.length + 1,
+        nome,
+        genero,
+        criador,
+        midia,
+        personagens,
+        temporadas,
+        popularidade,
+        ativo
+    };
+
+    universos.push(novouniverso);
+
+    res.status(201).json({
+        success: true,
+        message: " novo universo cadastrado com sucesso",
+        data: novouniverso
+    });
+}
+
+const deleteuniverso = (req, res) => {
+    const { id } =req.params;
+
+    if(isNaN(id)) {
+        return res.status(400).json({
+            success: false,
+            message: "O id deve ser válido"
         });
+    }
+
+    const idParaApagar = parseInt(id);
+
+    const universoParaRemover = universos.find(c => c.id !== idParaApagar);
+
+    if (!universoParaRemover) {
+        return res.status(404).json({
+            success: false,
+            message: "universo com esse id não existe"
+        });
+    }
+
+    const universoFiltados = universos.filter(a => a.id !== idParaApagar);
+
+    universos.splice(0, universos.length, ...universoFiltados);
+
+    return res.status(200).json({
+        success: true,
+        message: "O universo foi removido com sucesso!"
+    });
+}
+
+const updateuniverso = (req, res) => {
+    const id = parseInt(req.params.id);
+    const {nome, genero, criador, midia, personagens, temporadas, popularidade, ativo} = req.body;
+
+    const generouniverso = ["Ação", "Fantasia Sombria", "Pós-apocalíptico", "Sobrenatural", "Aventura", "Super-herói", "Artes Marciais", "Suspense", "Mistério", "Comédia", "Slice of Life"];
+
+    if (isNaN(id)) {
+        return res.status(400).json({
+            success: false,
+            message: "O id deve ser válido"
+        });
+    }
+
+    const universoExiste = universos.find(c => c.id === id);
+
+    if (!universoExiste) {
+        return res.status(404).json({
+            success: false,
+            message: "universo não existe"
+        });
+    }
+
+    if (temporadas <= 1) {
+        return res.status(400).json({
+            success: false,
+            message: "O universo deve ter mais que 1 episodio "
+        });
+    }
+
+    console.log(universo);
+
+     const universoAtualizados = universos.map(universo => 
+        universo.id === id
+    ? {
+        ...universo,
+        ...universo(nome && { nome }),
+        ...universo(genero && { genero }),
+        ...universo(criador && { criador }),
+        ...universo(midia && { midia }),
+        ...universo(personagens && { personagens}),
+        ...universo(popularidade && { popularidade }),
+        ...universo(ativo && { ativo }),
+        ...universo(temporadas && { temporadas })
+    }
+       :universo 
+    );
+
+    universos.splice(0, universos.length, ...universosAtualizados);
+
+    const universosAtualizados = universos.find(c => c.id === id);
+
+    res.status(200).json({
+        success: true,
+        message: "universo atualizado com sucesso",
+        data: universoAtualizados
+    });
+}
+
+export {getAlluniverso, getuniversoById, createuniverso, deleteuniverso, updateuniverso};
