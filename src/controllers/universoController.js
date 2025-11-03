@@ -1,7 +1,3 @@
-import dados from "../models/dados.js";
-const { animes } = dados;
-
-
 import * as universoModels from '../models/UNmodels.js'
 
 export const listarTodos = async (req, res) =>  {
